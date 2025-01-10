@@ -1,4 +1,4 @@
-import { SignIn } from '@clerk/nextjs'
+import { GoogleOneTap, SignIn } from '@clerk/nextjs'
 
 export default function Page() {
 

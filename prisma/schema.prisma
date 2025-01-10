@@ -21,5 +21,25 @@ model User {
 
     emailAddress String @unique
 
-    credits Int @default(150)
+    credits       Int             @default(150)
+    UserToProject UserToProject[]
+}
+
+model Project {
+    id        String    @id @default(cuid())
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    name      String
+    githubUrl String
+    deletedAt DateTime?
+}
+
+model UserToProject {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    userId    String
+    projectId String
+    user      User   @relation(fields: [userId], references: [id])
 }
