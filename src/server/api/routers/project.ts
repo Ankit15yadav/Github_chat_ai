@@ -2,6 +2,7 @@
 import { db } from "@/server/db";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
+import { pollCommits } from "@/lib/github";
 
 export const projectRouter = createTRPCRouter({
     createProject: protectedProcedure
@@ -15,10 +16,6 @@ export const projectRouter = createTRPCRouter({
             if (!ctx.user.userId) {
                 throw new Error("User ID is required");
             }
-
-            console.log("User ID:", ctx.user.userId);
-
-            // Verify the user exists in the database
             const user = await ctx.db.user.findUnique({
                 where: { id: ctx.user.userId }
             });
@@ -40,6 +37,7 @@ export const projectRouter = createTRPCRouter({
                 },
             });
 
+            await pollCommits(project.id);
             return project;
         }),
     getProjects: protectedProcedure.query(async ({ ctx }) => {
@@ -54,5 +52,15 @@ export const projectRouter = createTRPCRouter({
             }
         })
         return projects;
+    }),
+    getCommits: protectedProcedure.input(z.object({
+        projectId: z.string(),
+    })).query(async ({ ctx, input }) => {
+        const commits = await ctx.db.commit.findMany({
+            where: {
+                projectId: input.projectId,
+            }
+        })
+        return commits;
     })
 })
