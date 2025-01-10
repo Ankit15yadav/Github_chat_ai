@@ -1,8 +1,10 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { api } from '@/trpc/react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 type Props = {}
 
@@ -15,10 +17,28 @@ type FormInput = {
 const CreatePage = (props: Props) => {
 
     const { register, handleSubmit, reset } = useForm<FormInput>()
+    const createProject = api.project.createProject.useMutation()
 
     const onSubmit = (data: FormInput) => {
-        window.alert(JSON.stringify(data, null, 2))
-        reset()
+        // window.alert(JSON.stringify(data, null, 2))
+        createProject.mutate(
+            {
+                githubUrl: data.repoUrl,   // Ensure repoUrl is being passed as githubUrl
+                name: data.projectName,    // projectName corresponds to name
+                githubToken: data.githubToken!,  // githubToken should be passed if optional
+            },
+            {
+                onSuccess: () => {
+                    toast.success('Project created successfully');
+                    reset();
+                },
+                onError: (error) => {
+                    console.error('Error creating project:', error);  // Log the error for better insights
+                    toast.error('Failed to create project');
+                },
+            }
+        );
+
     }
 
     return (
@@ -48,11 +68,12 @@ const CreatePage = (props: Props) => {
                             />
                             <div className="h-4"></div>
                             <Input
-                                {...register('githubToken', { required: true })}
+                                required={false}
+                                {...register('githubToken', { required: false })}
                                 placeholder='Github Token (optional for private repos)'
                             />
                             <div className="h-4"></div>
-                            <Button type='submit' className='w-full'>
+                            <Button type='submit' className='w-full' disabled={createProject.isPending}>
                                 Create Project
                             </Button>
                         </form>
