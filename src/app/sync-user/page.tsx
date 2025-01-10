@@ -24,11 +24,13 @@ const SyncUser = async (props: Props) => {
             emailAddress: user.emailAddresses[0]?.emailAddress
         },
         update: {
+            id: userId,
             imageUrl: user.imageUrl,
             firstName: user.firstName,
             lastName: user.lastName,
         },
         create: {
+            id: userId,
             emailAddress: user.emailAddresses[0]?.emailAddress ?? "",
             imageUrl: user.imageUrl,
             firstName: user.firstName,

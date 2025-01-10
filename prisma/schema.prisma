@@ -21,18 +21,18 @@ model User {
 
     emailAddress String @unique
 
-    credits       Int             @default(150)
-    UserToProject UserToProject[]
+    credits        Int             @default(150)
+    UserToProjects UserToProject[]
 }
 
 model Project {
-    id            String          @id @default(cuid())
-    createdAt     DateTime        @default(now())
-    updatedAt     DateTime        @updatedAt
-    name          String
-    githubUrl     String
-    deletedAt     DateTime?
-    UserToProject UserToProject[]
+    id             String          @id @default(cuid())
+    createdAt      DateTime        @default(now())
+    updatedAt      DateTime        @updatedAt
+    name           String
+    githubUrl      String
+    deletedAt      DateTime?
+    UserToProjects UserToProject[]
 }
 
 model UserToProject {
