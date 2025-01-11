@@ -19,7 +19,7 @@ const CodeReferences = ({ fileReference }: Props) => {
     return (
         <div className='max-w-[90vw] '>
             <Tabs value={tab} onValueChange={setTab} >
-                <div className='overflow-hidden flex gap-2 bg-gray-200 p-1 rounded-md'>
+                <div className='overflow-y-hidden flex gap-2 bg-gray-200 p-1 rounded-md'>
                     {fileReference.map((file, index) => (
                         <button
                             key={index}

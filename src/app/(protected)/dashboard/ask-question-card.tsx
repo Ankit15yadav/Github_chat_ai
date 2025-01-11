@@ -12,6 +12,8 @@ import { readStreamableValue } from 'ai/rsc'
 import MDEditor from "@uiw/react-md-editor"
 import { set } from 'date-fns'
 import CodeReferences from './code-reference'
+import { api } from '@/trpc/react'
+import { toast } from 'sonner'
 
 type Props = {}
 
@@ -22,6 +24,7 @@ const AskQuestionCard = (props: Props) => {
     const [loading, setLoading] = React.useState(false)
     const [fileReferences, setFileReferences] = React.useState<Array<{ fileName: string; sourceCode: string; summary: string }>>([])
     const [answer, setAnswer] = React.useState('')
+    const saveAnswer = api.project.saveAnswer.useMutation()
 
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         setAnswer('')
@@ -52,9 +55,33 @@ const AskQuestionCard = (props: Props) => {
                 <DialogContent className="sm:max-w-[80vw] h-[95vh] flex  flex-col">
                     {/* Header section */}
                     <DialogHeader className="border-b pb-4">
-                        <DialogTitle className='flex gap-x-4'>
+                        <DialogTitle className='flex items-center gap-x-4'>
                             <Image src="/github.png" alt="Logo" width={40} height={40} />
                             <span className="text-xl font-semibold text-gray-800">AI Code Explanation</span>
+                            <Button
+                                disabled={saveAnswer.isPending}
+                                onClick={() => {
+                                    saveAnswer.mutate({
+                                        projectId: projectId,
+                                        question,
+                                        answer,
+                                        fileReferences
+                                    },
+                                        {
+                                            onSuccess: () => {
+                                                toast.success('Answer saved successfully')
+                                            },
+
+                                            onError: () => {
+                                                toast.error('Error saving answer')
+                                            }
+                                        })
+                                }}
+                            >
+                                {
+                                    saveAnswer.isPending ? 'Saving...' : 'Save Answer'
+                                }
+                            </Button>
                         </DialogTitle>
                     </DialogHeader>
 
@@ -89,6 +116,7 @@ const AskQuestionCard = (props: Props) => {
                 <CardContent>
                     <form onSubmit={onSubmit}>
                         <Textarea
+                            required
                             placeholder='Which file should I look at to fix this error'
                             value={question}
                             onChange={(e) => setQuestion(e.target.value)}
