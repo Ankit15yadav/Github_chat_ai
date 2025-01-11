@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import useRefetch from '@/hooks/use-refetch'
 import { api } from '@/trpc/react'
+import { Loader } from 'lucide-react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -77,7 +78,14 @@ const CreatePage = (props: Props) => {
                             />
                             <div className="h-4"></div>
                             <Button type='submit' className='w-full' disabled={createProject.isPending}>
-                                Create Project
+                                {createProject.isPending ? (
+                                    <>
+                                        <Loader className='animate-spin' />
+                                        <p>Creating</p>
+                                    </>
+
+                                ) : (<p>Create Project</p>)}
+
                             </Button>
                         </form>
                     </div>

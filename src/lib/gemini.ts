@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { Document } from "@langchain/core/documents";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 const ModelParams = genAI.getGenerativeModel({
@@ -44,4 +45,69 @@ Please summarise the following diff file: \n\n${diff}`
 
     return response.response.text()
 }
+
+export async function summariseCode(doc: Document) {
+    console.log("getting summary for", doc.metadata.source);
+    const code = doc.pageContent.slice(0, 10000); // Limit to 10000 characters
+    const response = await ModelParams.generateContent([
+        `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects,
+        You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file,
+        Here is the code:,
+        ---,
+        ${code},
+        ---,
+        Give a summary no more than 400 words of the code above,`
+    ]);
+    return response.response.text();
+}
+
+export async function generateEmbedding(summary: string) {
+    const model = genAI.getGenerativeModel({
+        model: 'text-embedding-004'
+    })
+    const result = await model.embedContent(summary)
+    const embeddings = result.embedding;
+    return embeddings.values;
+}
+
+// const doc = new Document({
+//     pageContent: `import "server-only";
+
+// import { createHydrationHelpers } from "@trpc/react-query/rsc";
+// import { headers } from "next/headers";
+// import { cache } from "react";
+
+// import { createCaller, type AppRouter } from "@/server/api/root";
+// import { createTRPCContext } from "@/server/api/trpc";
+// import { createQueryClient } from "./query-client";
+
+// /**
+//  * This wraps the \`createTRPCContext\` helper and provides the required context for the tRPC API when
+//  * handling a tRPC call from a React Server Component.
+//  */
+// const createContext = cache(async () => {
+//   const heads = new Headers(await headers());
+//   heads.set("x-trpc-source", "rsc");
+
+//   return createTRPCContext({
+//     headers: heads,
+//   });
+// });
+
+// const getQueryClient = cache(createQueryClient);
+// const caller = createCaller(createContext);
+
+// export const { trpc: api, HydrateClient } = createHydrationHelpers<AppRouter>(
+//   caller,
+//   getQueryClient
+// );`,
+//     metadata: {
+//         source: "src/trpc/server.ts",
+//         repository: "https://github.com/Ankit15yadav/Github_chat_ai",
+//         branch: "main",
+//     },
+//     id: undefined,
+// });
+
+// console.log(await summariseCode(doc));
 

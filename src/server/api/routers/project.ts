@@ -1,5 +1,3 @@
-// 'use server'
-import { db } from "@/server/db";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { pollCommits } from "@/lib/github";
