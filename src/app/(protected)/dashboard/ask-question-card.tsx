@@ -14,6 +14,7 @@ import { set } from 'date-fns'
 import CodeReferences from './code-reference'
 import { api } from '@/trpc/react'
 import { toast } from 'sonner'
+import useRefetch from '@/hooks/use-refetch'
 
 type Props = {}
 
@@ -48,6 +49,8 @@ const AskQuestionCard = (props: Props) => {
 
     }
 
+    const refetch = useRefetch();
+
     return (
         <>
 
@@ -70,6 +73,7 @@ const AskQuestionCard = (props: Props) => {
                                         {
                                             onSuccess: () => {
                                                 toast.success('Answer saved successfully')
+                                                refetch()
                                             },
 
                                             onError: () => {

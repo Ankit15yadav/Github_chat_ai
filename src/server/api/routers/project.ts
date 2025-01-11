@@ -89,6 +89,9 @@ export const projectRouter = createTRPCRouter({
             },
             orderBy: {
                 createdAt: "desc"
+            },
+            include: {
+                user: true
             }
         })
     })

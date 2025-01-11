@@ -22,16 +22,16 @@ const items = [
         href: '/qa',
         icon: Bot
     },
-    {
-        label: 'Meetings',
-        href: '/meetings',
-        icon: Presentation
-    },
-    {
-        label: 'Billing',
-        href: '/billing',
-        icon: CreditCard
-    }
+    // {
+    //     label: 'Meetings',
+    //     href: '/meetings',
+    //     icon: Presentation
+    // },
+    // {
+    //     label: 'Billing',
+    //     href: '/billing',
+    //     icon: CreditCard
+    // }
 ]
 
 
