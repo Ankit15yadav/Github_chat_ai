@@ -19,7 +19,7 @@ export const loadGithubRepo = async (githubUrl: string, githubToken?: string) =>
 
 }
 
-console.log(await loadGithubRepo('https://github.com/Ankit15yadav/Github_chat_ai'))
+// console.log(await loadGithubRepo('https://github.com/Ankit15yadav/Github_chat_ai'))
 
 // this is how i am getting data
 
@@ -42,7 +42,21 @@ export const indexGithubRepo = async (projectId: string, githubUrl: string, gith
             return
         }
 
-        // const sourcecodeEmbedding = await 
+        const sourceCodeEmbedding = await db.sourceCodeEmbedding.create({
+            data: {
+                summary: embeding.summary,
+                sourceCode: embeding.sourceCode,
+                fileName: embeding.fileName,
+                projectId: projectId,
+
+            }
+        })
+        await db.$executeRaw`
+        UPDATE "SourceCodeEmbedding"
+        SET "summaryEmbedding" = ${embeding.embedding} :: vector
+        -- this is the id of the source code embedding stored in the database for each vector
+        WHERE "id" = ${sourceCodeEmbedding.id}
+        `
     }))
 }
 

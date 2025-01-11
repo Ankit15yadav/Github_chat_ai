@@ -4,6 +4,7 @@ import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGrou
 import useProjects from '@/hooks/use-project'
 import { cn } from '@/lib/utils'
 import { Bot, CreditCard, LayoutDashboard, Plus, Presentation } from 'lucide-react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React, { useState } from 'react'
@@ -42,7 +43,13 @@ const AppSidebar = (props: Props) => {
     return (
         <Sidebar collapsible='icon' variant='floating'>
             <SidebarHeader>
-                Logo
+                <Image
+                    src={'/github.png'}
+                    alt='logo'
+                    width={50}
+                    height={50}
+                />
+
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
@@ -69,10 +76,8 @@ const AppSidebar = (props: Props) => {
                                 })
                             }
                         </SidebarMenu>
-
                     </SidebarGroupContent>
                 </SidebarGroup>
-
                 <SidebarGroup>
                     <SidebarGroupLabel>
                         Your Projects
@@ -117,8 +122,6 @@ const AppSidebar = (props: Props) => {
                                     </Link>
                                 </SidebarMenuItem>
                             </div>
-
-
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

@@ -7,8 +7,6 @@ export const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
 })
 
-const githubUrl = 'https://github.com/Ankit15yadav/Github_chat_ai'
-
 type Response = {
     commitHash: string,
     commitMessage: string,
@@ -19,6 +17,11 @@ type Response = {
 }
 
 export const getCommitHashes = async (githubUrl: string): Promise<Response[]> => {
+
+    if (!githubUrl) {
+        throw new Error('GitHub URL is required');
+    }
+
     const parts = githubUrl.split('/')
     const owner = parts[parts.length - 2]
     const repo = parts[parts.length - 1]
@@ -122,4 +125,4 @@ async function filterUnprocessedCommits(projectId: string, commitHashes: Respons
 
 }
 
-await pollCommits('cm5qvwo4a0000j4977tmh3ip8').then(console.log)
+// await pollCommits('cm5qvwo4a0000j4977tmh3ip8').then(console.log)
