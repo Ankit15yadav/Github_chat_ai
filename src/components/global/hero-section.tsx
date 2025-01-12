@@ -2,18 +2,16 @@
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-// import AnimatedBackground from './AnimatedBackground'
+import AnimatedBackground from './hero-animation'
 import { GitBranch, MessageSquare, Zap } from 'lucide-react'
 import { useUser } from '@clerk/nextjs'
 
-
 export default function Hero() {
-
     const { user } = useUser()
 
     return (
-        <div className=" overflow-hidden bg-background">
-            {/* <AnimatedBackground /> */}
+        <div className="relative overflow-hidden bg-background">
+            <AnimatedBackground />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
                 <div className="text-center">
                     <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl md:text-6xl">
@@ -26,21 +24,11 @@ export default function Hero() {
                     <div className="mt-10 max-w-md mx-auto sm:flex sm:justify-center md:mt-12">
                         <div className="rounded-md shadow">
                             <Button asChild size="lg" className="w-full">
-                                {
-                                    user
-                                        ?
-                                        (
-                                            <Link href={"/dashboard"}>
-                                                Get Started
-                                            </Link>
-                                        )
-                                        :
-                                        (
-                                            <Link href={"/sign-in"}>
-                                                Get Started
-                                            </Link>
-                                        )
-                                }
+                                {user ? (
+                                    <Link href="/dashboard">Get Started</Link>
+                                ) : (
+                                    <Link href="/sign-in">Get Started</Link>
+                                )}
                             </Button>
                         </div>
                         <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">

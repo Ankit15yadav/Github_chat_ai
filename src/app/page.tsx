@@ -1,3 +1,6 @@
+import CTA from '@/components/global/cta-comp'
+import Footer from '@/components/global/footer'
+import { FAQAccordion } from '@/components/global/freq-ask-question'
 import HeroSection from '@/components/global/hero-section'
 import Navbar from '@/components/global/navbar'
 import React from 'react'
@@ -10,6 +13,10 @@ const page = (props: Props) => {
 
       <Navbar />
       <HeroSection />
+      <CTA />
+      <FAQAccordion />
+
+      <Footer />
     </div>
   )
 }

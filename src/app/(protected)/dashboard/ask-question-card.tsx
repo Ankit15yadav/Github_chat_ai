@@ -15,6 +15,7 @@ import CodeReferences from './code-reference'
 import { api } from '@/trpc/react'
 import { toast } from 'sonner'
 import useRefetch from '@/hooks/use-refetch'
+import { Loader } from 'lucide-react'
 
 type Props = {}
 
@@ -83,7 +84,10 @@ const AskQuestionCard = (props: Props) => {
                                 }}
                             >
                                 {
-                                    saveAnswer.isPending ? 'Saving...' : 'Save Answer'
+                                    saveAnswer.isPending ? (<div className='flex items-center gap-x-1'>
+                                        <Loader className='animate-spin' />
+                                        <span>Saving...</span>
+                                    </div>) : 'Save Answer'
                                 }
                             </Button>
                         </DialogTitle>
@@ -126,7 +130,16 @@ const AskQuestionCard = (props: Props) => {
                             onChange={(e) => setQuestion(e.target.value)}
                         />
                         <div className="h-4"></div>
-                        <Button type='submit' disabled={loading} >Ask Nexus</Button>
+                        <Button type='submit' disabled={loading} >
+                            {
+                                loading ? (<div className='flex items-center'>
+                                    <Loader className='animate-spin mr-2' />
+                                    <span>Asking...</span>
+                                </div>)
+                                    :
+                                    'Ask Nexus'
+                            }
+                        </Button>
                     </form>
                 </CardContent>
             </Card>
