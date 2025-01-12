@@ -34,7 +34,7 @@ const SidebarLayout = (props: Props) => {
                         <SidebarTrigger />
                     </div>
                     <div className="ml-auto"></div>
-                    <UserButton afterSignOutUrl='/' />
+                    {/* <UserButton afterSignOutUrl='/' /> */}
                 </div>
                 <div className="h-4"></div>
                 <div className="border-sidebar-border bg-sidebar border shadow rounded-md overflow-y-scroll h-[calc(100vh-6rem)] p-4">
