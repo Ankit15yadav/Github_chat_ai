@@ -7,6 +7,7 @@ import { Bot, CreditCard, LayoutDashboard, Plus, Presentation } from 'lucide-rea
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Router } from 'next/router'
 import React, { useState } from 'react'
 
 type Props = {}
@@ -42,13 +43,26 @@ const AppSidebar = (props: Props) => {
 
     return (
         <Sidebar collapsible='icon' variant='floating'>
-            <SidebarHeader>
-                <Image
-                    src={'/github.png'}
-                    alt='logo'
-                    width={50}
-                    height={50}
-                />
+            <SidebarHeader className=''>
+                <div className='flex items-center gap-2'>
+                    <Image
+                        src={'/github.png'}
+                        alt='logo'
+                        width={50}
+                        height={50}
+                        onClick={() => {
+                            // setprojectId(null)
+                            window.location.href = '/'
+                        }}
+                        className='cursor-pointer'
+                    />
+                    {open && (
+                        <span className='text-2xl font-bold bg-gradient-to-br from-indigo-500 via-emerald-400 to-cyan-800 bg-clip-text text-transparent'>
+                            NexusCode
+                        </span>
+                    )}
+
+                </div>
 
             </SidebarHeader>
             <SidebarContent>
@@ -98,7 +112,9 @@ const AppSidebar = (props: Props) => {
                                                             'bg-primary text-white': project.id === projectId
                                                         }
                                                     )}>
-                                                        {project.name[0]}
+                                                        <span className='w-5  mx-auto text-center leading-none'>
+                                                            {project.name.charAt(0).toUpperCase()}
+                                                        </span>
                                                     </div>
                                                     <span>{project.name} </span>
 

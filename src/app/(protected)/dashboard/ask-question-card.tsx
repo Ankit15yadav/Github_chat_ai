@@ -126,7 +126,7 @@ const AskQuestionCard = (props: Props) => {
                             onChange={(e) => setQuestion(e.target.value)}
                         />
                         <div className="h-4"></div>
-                        <Button type='submit' disabled={loading} >Ask Github</Button>
+                        <Button type='submit' disabled={loading} >Ask Nexus</Button>
                     </form>
                 </CardContent>
             </Card>
