@@ -33,42 +33,64 @@ export const loadGithubRepo = async (githubUrl: string, githubToken?: string) =>
 //     id: undefined,
 //   }
 
-export const indexGithubRepo = async (projectId: string, githubUrl: string, githubToken?: string) => {
-    const docs = await loadGithubRepo(githubUrl, githubToken!);
-    const allEmbeddings = await generateEmbeddings(docs)
+const isSummarizableFile = (fileName: string) => {
+    const textBasedExtensions = [
+        '.js', '.jsx', '.ts', '.tsx', '.html', '.css', '.json', '.md', '.txt', '.config', '.yml', '.yaml'
+    ];
+    return textBasedExtensions.some(ext => fileName.endsWith(ext));
+};
 
-    await Promise.allSettled(allEmbeddings.map(async (embeding, index) => {
-        if (!embeding) {
-            return
-        }
-
-        const sourceCodeEmbedding = await db.sourceCodeEmbedding.create({
-            data: {
-                summary: embeding.summary,
-                sourceCode: embeding.sourceCode,
-                fileName: embeding.fileName,
-                projectId: projectId,
-
-            }
-        })
-        await db.$executeRaw`
-        UPDATE "SourceCodeEmbedding"
-        SET "summaryEmbedding" = ${embeding.embedding} :: vector
-        -- this is the id of the source code embedding stored in the database for each vector
-        WHERE "id" = ${sourceCodeEmbedding.id}
-        `
-    }))
-}
 
 const generateEmbeddings = async (docs: Document[]) => {
     return await Promise.all(docs.map(async doc => {
-        const summary = await summariseCode(doc)
-        const embedding = await generateEmbedding(summary)
-        return {
-            summary,
-            embedding,
-            sourceCode: JSON.parse(JSON.stringify(doc.pageContent)),
-            fileName: doc.metadata.source
+        try {
+            const fileName = doc.metadata.source;
+            if (!isSummarizableFile(fileName)) {
+                console.warn(`Skipping non-summarizable file: ${fileName}`);
+                return null;
+            }
+
+            let summary = await summariseCode(doc);
+            if (!summary || summary.trim().length === 0) {
+                summary = `File: ${fileName} contains ${doc.pageContent.length} characters.`;
+            }
+            const embedding = await generateEmbedding(summary);
+            return {
+                summary,
+                embedding,
+                sourceCode: doc.pageContent,
+                fileName
+            };
+        } catch (error) {
+            console.error(`Error summarizing file ${doc.metadata.source}:`, error);
+            return null;
         }
-    }))
-}
+    }));
+};
+
+
+export const indexGithubRepo = async (projectId: string, githubUrl: string, githubToken?: string) => {
+    const docs = await loadGithubRepo(githubUrl, githubToken);
+    const allEmbeddings = await generateEmbeddings(docs);
+
+    const validEmbeddings = allEmbeddings.filter(embedding => embedding !== null); // Filter out nulls
+
+    await Promise.allSettled(validEmbeddings.map(async (embedding) => {
+        if (!embedding) return;
+
+        const sourceCodeEmbedding = await db.sourceCodeEmbedding.create({
+            data: {
+                summary: embedding.summary,
+                sourceCode: embedding.sourceCode,
+                fileName: embedding.fileName,
+                projectId: projectId,
+            }
+        });
+
+        await db.$executeRaw`
+        UPDATE "SourceCodeEmbedding"
+        SET "summaryEmbedding" = ${embedding.embedding} :: vector
+        WHERE "id" = ${sourceCodeEmbedding.id}
+        `;
+    }));
+};
